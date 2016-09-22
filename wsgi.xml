@@ -1,0 +1,7 @@
+<uwsgi>
+<socket>8080</socket>
+<chdir>/home/huanghao/aliyun_v3</chdir>
+<processes>4</processes>
+<module>django_wsgi</module>
+<daemonize>/home/huanghao/aliyun_v3/aliyun_v3/aliyun.log</daemonize>
+</uwsgi>

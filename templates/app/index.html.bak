@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>客户列表</title>
+</head>
+
+
+<body style="margin:50px">
+
+<form action="/search/" method="POST" class="form-inline">
+<div style="width:950px;margin:auto">
+    <ul class="list-inline">
+    <li><a href="{% url 'month' %}">30天内到期</a></li>
+    <li style="float:right"><input name="search_name" type="search" class="" placeholder="输入公司名称"/>&nbsp;&nbsp;<input type="submit" value="搜索" id="search_id" /></li><!--搜索框-->
+	<!--<li class="kuan"><input name="search_name" type="text" value="输入公司名称搜索..." onfocus="if(this.value=='输入公司名称搜索...')this.value='';" onblur="if(this.value=='')this.value='输入公司名称搜索...';"/>&nbsp;&nbsp;<input type="submit" value="搜索" id="search_id" /></li><!--搜索框-->
+    </ul>
+    
+</div>
+</form>
+
+<div style="height:50px"></div>
+
+<table class="table table-hover">
+    <tr>
+        <th>公司名称</th>
+        <th>产品名称</th>
+        <th>绑定域名</th>
+        <th>到期日期</th>
+        <th>所属部门</th>
+ 
+    </tr>
+    {% for i in bus_list %}
+    <tr>
+        <td><a href="{% url 'custom' i.com_name_id %}">{{ i.com_name }}</a></td>
+        <td>{{ i.pro_name }}</td>
+        <td>{{ i.identify }}</td>
+        <td>{{ i.exp_date }}</td>
+        <td>
+            {% for key,vaule in dep_list.items %}
+                {% if i.id = key %}
+                    {{ vaule }}
+                {% endif %}
+            {% endfor %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>

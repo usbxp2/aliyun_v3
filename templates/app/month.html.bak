@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>客户列表</title>
+    <style>
+        .tab{margin:auto;width:950px;text-align:center;margin-top:10px}
+        .div1{height:25px;margin:auto;width:950px;margin-top:50px;}
+        <!--.kuan{float:right}-->
+		li{list-style:none;float:left; }
+
+    </style>
+</head>
+<body>
+
+<form action="/search/" method="POST">
+<div class="div1">
+    <ul>
+    <li class="home"><a href="{% url 'index' %}">首页</a></li>
+    <li class="kuan"><input name="search_name" type="text" value="输入公司名称搜索..." onfocus="if(this.value=='输入公司名称搜索...')this.value='';" onblur="if(this.value=='')this.value='输入公司名称搜索...';"/>&nbsp;&nbsp;<input type="submit" value="搜索" id="search_id" /></li><!--搜索框-->
+    </ul>
+    
+</div>
+</form>
+
+<table class="tab" border="1">
+    <tr align="left">
+        <th>公司名称</th>
+        <th>产品名称</th>
+        <th>绑定域名</th>
+        <th>到期日期</th>
+        <th>价格(元/年)</th>
+		<th>所属部门</th>
+       <!-- <th>操作</th>-->
+    </tr>
+    {% for i in bus_list %}
+    <tr align="left">
+        <td>{{ i.com_name }}</td>
+        <td>{{ i.pro_name }}</td>
+        <td>{{ i.identify }}</td>
+        <td>{{ i.exp_date }}</td>
+        <td>
+            {% for key,vaule in pri_list.items %}
+                {% if i.id = key %}
+                    {{ vaule }}
+                {% endif %}
+            {% endfor %}
+        </td>
+		<td>
+            {% for key,vaule in dep_list.items %}
+                {% if i.id = key %}
+                    {{ vaule }}
+                {% endif %}
+            {% endfor %}
+        </td>
+        <!--<td>
+            <form action="/update/" method="POST">
+            <input type="hidden" name="buss_id" value="{{i.id}}" /><input type="submit" value="续费" /></form>
+        </td>-->
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>

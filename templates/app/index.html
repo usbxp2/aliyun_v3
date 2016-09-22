@@ -1,0 +1,69 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>客户列表</title>
+</head>
+
+
+<body style="margin:50px">
+
+<form action="/search/" method="POST" class="form-inline">
+<div style="width:950px;margin:auto">
+    <ul class="list-inline">
+    <li><a href="{% url 'month' %}">30天内到期</a></li>
+    <li><a href="{% url 'overdue' %}">已过期</a></li>
+    <li style="float:right"><input name="search_name" type="search" class="" placeholder="输入公司名称"/>&nbsp;&nbsp;<input type="submit" value="搜索" id="search_id" /></li><!--搜索框-->
+	<!--<li class="kuan"><input name="search_name" type="text" value="输入公司名称搜索..." onfocus="if(this.value=='输入公司名称搜索...')this.value='';" onblur="if(this.value=='')this.value='输入公司名称搜索...';"/>&nbsp;&nbsp;<input type="submit" value="搜索" id="search_id" /></li><!--搜索框-->
+    </ul>
+    
+</div>
+</form>
+
+<div style="height:50px"></div>
+
+<table class="table table-hover">
+    <tr>
+        <th>公司名称</th>
+        <th>产品名称</th>
+        <th>绑定域名</th>
+        <th>主机名</th>
+        <th>到期日期</th>
+        <th>所属部门</th>
+ 
+    </tr>
+    {% for i in bus_list %}
+    <tr>
+        <td><a href="{% url 'custom' i.com_name_id%}">{{ i.com_name }}</a></td>
+        <td>{{ i.pro_name }}</td>
+        <td>{{ i.identify }}</td>
+        <td>{{ i.host_name }}</td>
+        <td>{{ i.exp_date }}</td>
+        <td>
+            {% for key,vaule in dep_list.items %}
+                {% if i.id = key %}
+                    {{ vaule }}
+                {% endif %}
+            {% endfor %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+<div style="text-align:center;">
+<ul class="list-inline">
+<!--如果当前是第一页，就不显示 上一页 链接-->
+<li>{% ifnotequal curPage 1 %}
+	<a href="?curPage={{ curPage }}&&allPage={{ allPage}}&&pageType=pageUp">上一页</a>
+{% endifnotequal %}</li>
+<li>第{{curPage}}/{{allPage}}页</li>
+
+<!--如果当前是最后一页，就不显示下一页链接-->
+<li>{% ifnotequal curPage allPage %}
+	<a href="?curPage={{ curPage }}&&allPage={{ allPage}}&&pageType=pageDown">下一页</a>	
+{% endifnotequal %}</li>
+</ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,85 @@
+#-*- coding:utf-8 -*-
+from django.shortcuts import render,render_to_response
+from app.models import *
+from django.http import HttpResponse
+from django.template import RequestContext,loader
+import datetime
+import forms
+# 邮件部分
+from django.core.mail import EmailMessage
+from settings import EMAIL_HOST_USER   #项目配置邮件地址，请参考发送普通邮件部分
+
+#创建发送邮件的函数
+def send_html_mail(subject, html_content, recipient_list):
+    msg = EmailMessage(subject, html_content, EMAIL_HOST_USER, recipient_list)
+    msg.content_subtype = "html" # Main content is now text/html
+    msg.send()
+
+# 邮件部分结束
+
+def sendmail(request):
+    #获取最近一个月有到期的业务的公司id列表
+    startdate = datetime.datetime.now().date()
+    enddate = startdate + datetime.timedelta(30)
+    comname = Business.objects.filter(exp_date__range = (startdate,enddate))
+    com_name_list = []
+    for i in comname:
+        com_name_list.append(i.com_name_id)
+    #公司id列表中去年重复的
+    com_name_list = list(set(com_name_list))
+    print com_name_list
+
+
+    for id in com_name_list:   #遍历公司id列表
+        com_info = Customer.objects.get(id=id)   #获取公司信息
+        bus_info = Business.objects.filter(com_name_id=id)   #获取公司下所有业务信息
+
+        #将每条业务的id和对应的价格放入字典
+        pricedic={}
+        for i in bus_info:  #遍历公司下所有业务
+           pricedic[i.id] = Product.objects.get(id=i.pro_name_id).price  #往字典中追加数据
+
+        #发送的html内容
+        html_content = loader.render_to_string(
+                           'app/mail_template.html',                                 #需要渲染的html模板
+                               {
+                                 'com_info':com_info,                   #参数
+                                 'bus_info':bus_info,
+                                 'pricedic':pricedic,
+                               }
+                           )
+        subject = '万网业务续费通知'
+        recipient_list = [com_info.email]  #收件人列表
+
+        send_html_mail(subject,html_content,recipient_list)  #调用函数发送邮件
+
+
+def index(request):
+
+    bus_list = Business.objects.all()
+    dep_list = {}
+    for i in bus_list:
+	id = Customer.objects.get(id=i.com_name_id).dep_name_id
+        dep_list[i.id] = Department.objects.get(id=id).dep_name
+
+    return render_to_response('app/index.html',{'bus_list':bus_list,'dep_list':dep_list})
+
+def search(request):
+    search_name = request.POST.get('search_name')
+
+    bus_list = Business.objects.filter(com_name__com_name__contains = search_name)  #contains模糊查询,外键需要具体到外键表中的字段，用__（两个下划线）连接。
+    dep_list = {}
+    for i in bus_list:
+        dep_list[i.id] = Department.objects.get(id=i.com_name_id).dep_name
+    return render_to_response('app/search.html',{'bus_list':bus_list,'dep_list':dep_list})
+
+def update(request):
+    buss_id = request.POST.get('buss_id')
+    bus_this = Business.objects.get(id=buss_id)
+    print bus_this.exp_date.year
+    bus_this.exp_date = bus_this.exp_date.replace(year = bus_this.exp_date.year + 1)
+    bus_this.save()
+    print bus_this.exp_date
+    return HttpResponse('续费成功')
+
+

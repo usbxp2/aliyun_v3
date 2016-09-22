@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <title>搜索</title>
+    <style>
+        .mydiv{width:600px;}
+        .logo{width:600px;text-align:center;margin:0 auto;}
+        body{text-align:center;padding-top:80px;}
+        .myinput{width:600px;}
+        .myform{margin-top: 30px;}
+    </style>
+</head>
+<body>
+
+<div class="logo"><a href="{% url 'index' %}"><img src="/static/logo.png" /></a></div>
+
+<form action="/xufei_search/" method="POST" class="form-inline myform">
+<!--<div class="div1">
+    <input class="text_input" name="search_name" type="text" value="输入公司名称搜索..." onfocus="if(this.value=='输入公司名称搜索...')this.value='';" onblur="if(this.value=='')this.value='输入公司名称搜索...';"/>&nbsp;&nbsp;<input class="btn" type="submit" value="搜索" id="search_id" />
+    
+    
+</div>-->
+<div class="form-group mydiv">
+    <input type="text" class="form-control myinput" name="search_name" placeholder="输入公司名称搜索(支持模糊查询)">
+  </div>
+  <button type="submit" class="btn btn-default">搜索</button>
+
+
+</form>
+</body>
+</html>
